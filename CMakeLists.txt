@@ -33,7 +33,7 @@ target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
 
 target_link_libraries(${PROJECT_NAME} portaudio)
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${PORT_AUDIO_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${PORT_AUDIO_DIR}/include)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
