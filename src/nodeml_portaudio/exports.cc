@@ -1,5 +1,8 @@
 #include <napi.h>
 #include <portaudio.h>
+#include <nodeml_portaudio/hosts.h>
+#include <nodeml_portaudio/Stream.h>
+#include <nodeml_portaudio/formats.h>
 
 void cleanup()
 {
@@ -13,6 +16,12 @@ Napi::Object InitModule(Napi::Env env, Napi::Object exports)
     }
 
     env.AddCleanupHook(cleanup);
+
+    nodeml_portaudio::hosts::Init(env,exports);
+
+    nodeml_portaudio::Stream::Init(env,exports);
+
+    nodeml_portaudio::formats::Init(env,exports);
 
     return exports;
 }

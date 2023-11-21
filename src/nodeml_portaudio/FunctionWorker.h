@@ -4,7 +4,7 @@
 #include <napi.h>
 #include <functional>
 
-namespace nodeml_gpt4all
+namespace nodeml_portaudio
 {
     template <typename T>
     class FunctionWorker : public Napi::AsyncWorker

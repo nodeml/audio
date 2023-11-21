@@ -38,26 +38,3 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PORT_AUDIO_DIR}/include)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 GenerateNodeLIB()
-
-# set(COMPONENT_NAME_MAIN ${PROJECT_NAME})
-# set(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR})
-
-# install(TARGETS llmodel DESTINATION bin)
-# install(TARGETS gptj-avxonly DESTINATION bin)
-# install(TARGETS gptj-default DESTINATION bin)
-# install(TARGETS llama-mainline-avxonly DESTINATION bin)
-# install(TARGETS llama-mainline-default DESTINATION bin)
-# install(TARGETS llamamodel-mainline-avxonly DESTINATION bin)
-# install(TARGETS llamamodel-mainline-default DESTINATION bin)
-# if(APPLE)
-#   install(TARGETS llamamodel-mainline-metal DESTINATION bin)
-# endif()
-# install(TARGETS bert-avxonly DESTINATION bin)
-# install(TARGETS bert-default DESTINATION bin)
-
-# file(GLOB_RECURSE ${CMAKE_BINARY_DIR}/bin/**/*.dll)
-# message(STATUS "DLL FILES ${ADDON_DLLS} ${CMAKE_BINARY_DIR}/bin")
-# add_custom_command(TARGET ${PROJECT_NAME}
-#                     POST_BUILD
-#                     COMMAND node ${CMAKE_SOURCE_DIR}/scripts/dlls.js)
-
