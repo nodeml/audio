@@ -13,9 +13,9 @@ namespace nodeml_portaudio
     {
         auto func = DefineClass(env, "Stream",
                                 {Stream::StaticMethod("create", &Stream::Create),
-                                Stream::InstanceMethod("start",&Stream::Start),
-                                Stream::InstanceMethod("stop",&Stream::Stop),
-                                Stream::InstanceMethod("close",&Stream::Close)});
+                                 Stream::InstanceMethod("start", &Stream::Start),
+                                 Stream::InstanceMethod("stop", &Stream::Stop),
+                                 Stream::InstanceMethod("close", &Stream::Close)});
 
         constructor = Napi::Persistent(func);
         constructor.SuppressDestruct();
@@ -58,11 +58,11 @@ namespace nodeml_portaudio
     }
     Napi::Value Stream::IsActive(const Napi::CallbackInfo &info)
     {
-         auto env = info.Env();
+        auto env = info.Env();
 
         try
         {
-            return Napi::Boolean::New(env,Pa_IsStreamActive(stream));
+            return Napi::Boolean::New(env, Pa_IsStreamActive(stream));
         }
         catch (const std::exception &e)
         {
@@ -126,7 +126,6 @@ namespace nodeml_portaudio
         {
             throw Napi::Error::New(env, e.what());
         }
-        
 
         return env.Undefined();
     }
@@ -146,7 +145,7 @@ namespace nodeml_portaudio
                 utils::GetStreamParameters(inputParams, info[0].ToObject());
 
             if (info[1].IsObject())
-                utils::GetStreamParameters(inputParams, info[1].ToObject());
+                utils::GetStreamParameters(outputParams, info[1].ToObject());
 
             if (inputParams.device == outputParams.device && inputParams.device == paNoDevice)
             {
@@ -183,8 +182,8 @@ namespace nodeml_portaudio
                 streamInfo->type = EStreamType::Output;
             }
 
-            streamInfo->inputFormat = inputParams.sampleFormat;
-            streamInfo->outputFormat = outputParams.sampleFormat;
+            streamInfo->inputParams = inputParams;
+            streamInfo->outputParams = outputParams;
 
             auto openResult = Pa_OpenStream(
                 &stream, inputParams.device == paNoDevice ? NULL : &inputParams, outputParams.device == paNoDevice ? NULL : &outputParams,
@@ -199,19 +198,14 @@ namespace nodeml_portaudio
                         owner->streamInfo->tsfn.Acquire();
                         owner->streamInfo->bHasBeenAquired = true;
                     }
-
-                    float *dataIn = (float*)input;
-
-                    float *dataOut = (float*)output;
-
                     std::promise<int> promise;
 
                     auto future = promise.get_future();
 
                     StreamCallbackInfo * info = new StreamCallbackInfo();
 
-                    info->dataIn = dataIn;
-                    info->dataOut = dataOut;
+                    info->dataIn = utils::CopyInputData(input,frameCount * owner->streamInfo->inputParams.channelCount,owner->streamInfo->inputParams.sampleFormat);
+                    info->dataOut = output;
                     info->frameCount = frameCount;
                     info->timeInfo = timeInfo;
                     info->streamInfo = owner->streamInfo;
@@ -219,22 +213,65 @@ namespace nodeml_portaudio
                     owner->streamInfo->tsfn.BlockingCall(info,[&promise](Napi::Env env, Napi::Function jsCallback, StreamCallbackInfo * value)
                     {
 
-                        Napi::EscapableHandleScope scope(env);
-                        
                         auto dataInputJs = env.Undefined();
 
-                        if(value->streamInfo->type == EStreamType::Duplex || value->streamInfo->type == EStreamType::Input){
-                            dataInputJs = utils::ToTypedArray(env,value->dataIn,value->frameCount,value->streamInfo->inputFormat);
+                        if(value->dataIn != nullptr){
+                            dataInputJs = utils::CopyToTypedArray(env,value->dataIn,value->frameCount * value->streamInfo->inputParams.channelCount,value->streamInfo->inputParams.sampleFormat);
+                            delete[] value->dataIn;
+                            
+                            value->dataIn = nullptr;
+                            
                         }
                          
 
                         auto dataOutputJs = env.Undefined();
-                        if(value->streamInfo->type == EStreamType::Duplex || value->streamInfo->type == EStreamType::Output){
-                            dataInputJs = utils::ToTypedArray(env,value->dataIn,value->frameCount,value->streamInfo->inputFormat);
+                        if(value->streamInfo->outputParams.device != paNoDevice){
+                            dataOutputJs = utils::EmptyTypedArray(env,value->frameCount * value->streamInfo->outputParams.channelCount,value->streamInfo->outputParams.sampleFormat);
                         }
 
                         auto jsResult = jsCallback.Call({dataInputJs,dataOutputJs, Napi::Number::New(env,value->frameCount), Napi::Number::New(env,value->timeInfo->currentTime)}).ToNumber();
                         
+                        if(dataOutputJs.IsTypedArray()){
+                            switch (value->streamInfo
+                            ->outputParams.sampleFormat)
+                            {
+                            case paFloat32:
+                            {
+                                utils::CopyFromTypedArray(dataOutputJs.As<Napi::TypedArrayOf<float>>(),(float *)value->dataOut);
+                            }
+                            break;
+
+                            case paInt32:
+                            {
+                                utils::CopyFromTypedArray(dataOutputJs.As<Napi::TypedArrayOf<int32_t>>(),(int32_t *)value->dataOut);
+                            }
+                            break;
+
+                            case paInt24:
+                                break;
+
+                            case paInt16:
+                            {
+                                utils::CopyFromTypedArray(dataOutputJs.As<Napi::TypedArrayOf<int16_t>>(),(int16_t*)value->dataOut);
+                            }
+                            break;
+
+                            case paInt8:
+                            {
+                               utils::CopyFromTypedArray(dataOutputJs.As<Napi::TypedArrayOf<int8_t>>(),(int8_t *)value->dataOut);
+                                }
+                            break;
+
+                            case paUInt8:
+                            {
+                                utils::CopyFromTypedArray(dataOutputJs.As<Napi::TypedArrayOf<uint8_t>>(),(uint8_t *)value->dataOut);
+                            }
+                            break;
+
+                            default:
+                                break;
+                            }
+                        }
                         promise.set_value(jsResult);
 
                         delete value;
@@ -265,9 +302,11 @@ namespace nodeml_portaudio
 
     void Stream::cleanup()
     {
-        if(streamInfo != NULL){
+        if (streamInfo != NULL)
+        {
 
-            if(streamInfo->bHasBeenAquired){
+            if (streamInfo->bHasBeenAquired)
+            {
                 streamInfo->tsfn.Release();
             }
 

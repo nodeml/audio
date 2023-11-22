@@ -19,6 +19,10 @@ set(PORT_AUDIO_DIR ${CMAKE_SOURCE_DIR}/deps/portaudio)
 
 DownloadPortAudio(${PORT_AUDIO_VERSION} ${CMAKE_SOURCE_DIR}/deps)
 
+set(DR_LIBS_DIR ${CMAKE_SOURCE_DIR}/deps/drlibs)
+
+DownloadDrLibs(${CMAKE_SOURCE_DIR}/deps)
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/deps/portaudio portaudio)
 
 # Build a shared library named after the project from the files in `src/`
@@ -34,6 +38,8 @@ target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
 target_link_libraries(${PROJECT_NAME} portaudio)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PORT_AUDIO_DIR}/include)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${DR_LIBS_DIR})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 

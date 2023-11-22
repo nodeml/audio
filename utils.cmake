@@ -13,6 +13,19 @@ function(DownloadPortAudio VERSION DESTINATION)
   endif()
 endfunction()
 
+
+
+function(DownloadDrLibs DESTINATION)
+  if(NOT EXISTS ${DESTINATION}/drlibs)
+
+    set(DOWNLOAD_FILE ${CMAKE_BINARY_DIR}/paudio.tgz)
+    
+    execute_process(
+      COMMAND git clone --depth 1 https://github.com/mackron/dr_libs ${DESTINATION}/drlibs
+    )
+  endif()
+endfunction()
+
 function(GenerateNodeLIB)
   if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
     # Generate node.lib

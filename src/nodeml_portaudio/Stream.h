@@ -18,8 +18,8 @@ namespace nodeml_portaudio
         Napi::ThreadSafeFunction tsfn;
         bool bHasBeenAquired = false;
         EStreamType type;
-        int inputFormat;
-        int outputFormat;
+        PaStreamParameters inputParams;
+        PaStreamParameters outputParams;
     };
 
     struct StreamCallbackInfo
