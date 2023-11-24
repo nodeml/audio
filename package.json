@@ -1,13 +1,13 @@
 {
   "name": "@nodeml/portaudio",
   "version": "1.0.0",
-  "description": "minimal portaudio bindings for nodejs.",
+  "description": "Minimal portaudio bindings for nodejs.",
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "keywords": [
-    "gpt",
-    "ai",
-    "chat"
+    "audio",
+    "portaudio",
+    "stream"
   ],
   "repository": {
     "type": "git",
