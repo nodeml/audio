@@ -13,19 +13,22 @@ function(DownloadPortAudio VERSION DESTINATION)
   endif()
 endfunction()
 
-
-
 function(DownloadDrLibs DESTINATION)
   if(NOT EXISTS ${DESTINATION}/drlibs)
-
-    set(DOWNLOAD_FILE ${CMAKE_BINARY_DIR}/paudio.tgz)
-    
     execute_process(
       COMMAND git clone --depth 1 https://github.com/mackron/dr_libs ${DESTINATION}/drlibs
     )
   endif()
 endfunction()
 
+# Get the version from the package.json
+function(GetVersion)
+  file(READ ${CMAKE_SOURCE_DIR}/package.json PACKAGE_JSON)
+  string(JSON PACKAGE_VERSION GET ${PACKAGE_JSON} version)
+  set(PACKAGE_VERSION ${PACKAGE_VERSION} PARENT_SCOPE)
+endfunction()
+
+# generate node.lib
 function(GenerateNodeLIB)
   if(MSVC AND CMAKE_JS_NODELIB_DEF AND CMAKE_JS_NODELIB_TARGET)
     # Generate node.lib

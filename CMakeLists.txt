@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
 
+
 include(${CMAKE_SOURCE_DIR}/utils.cmake)
+
+GetVersion()
 
 cmake_policy(SET CMP0091 NEW)
 cmake_policy(SET CMP0042 NEW)
 
-project(nodeml_portaudio VERSION 1.0)
+project(nodeml_portaudio VERSION ${PACKAGE_VERSION})
+message(STATUS "VERSION ${PACKAGE_VERSION}")
 
 set(CMAKE_CXX_STANDARD 17)
 
