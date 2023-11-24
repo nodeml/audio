@@ -4,8 +4,8 @@
 #include <functional>
 #include <portaudio.h>
 #include <queue>
-#include <nodeml_portaudio/utils.h>
-#include <nodeml_portaudio/ChunkStream.h>
+#include <addon/utils.h>
+#include <addon/ChunkStream.h>
 
 namespace nodeml_portaudio
 {

@@ -1,8 +1,8 @@
 #include <napi.h>
 #include <portaudio.h>
-#include <nodeml_portaudio/hosts.h>
-#include <nodeml_portaudio/Stream.h>
-#include <nodeml_portaudio/formats.h>
+#include <addon/hosts.h>
+#include <addon/Stream.h>
+#include <addon/formats.h>
 
 void cleanup()
 {
