@@ -14,25 +14,52 @@ async function main() {
     //     return !total.includes('USER:');
     // })
     const hosts = portaudio.getHosts();
-    const defaultHost = hosts[portaudio.getDefaultHostIndex()]
-    console.log(hosts,defaultHost)
-    const mainMic = portaudio.getHostDevices(defaultHost.id)[1]
-    console.log("USING DEVICE JS",mainMic)
-    const stream = portaudio.Stream.create({
-        channelCount : 1,
-        device: mainMic.id,
-        sampleFormat: portaudio.formats.float32
-    },undefined,16000,8000,(audioData) => {
-        console.log("Got Audio",audioData)
+    const defaultHost = hosts[0]
+    const mainIn = portaudio.getHostDevices(defaultHost.id).find(c => c.id === defaultHost.defaultInputDevice);
 
-        return 0;
-    })
-    stream.start()
-    console.log(defaultHost)
+    const mainOut = portaudio.getHostDevices(defaultHost.id).find(c => c.id === defaultHost.defaultOutputDevice);
+    console.log("USING DEVICE JS",defaultHost,mainIn,mainOut)
+
+    let collected = new Float32Array();
+
+    const sampleRate = mainOut.defaultSampleRate;
+    const recordTime = 0.03;
+
+    const framesPerBuffer = parseInt(sampleRate * recordTime)
+
+    console.log(framesPerBuffer)
+    const outputStream = portaudio.Stream.create(undefined,{
+        channelCount : 1 ?? mainOut.maxOutputChannels,
+        device: mainOut.id,
+        sampleFormat: portaudio.formats.float32
+    },sampleRate,framesPerBuffer)//,framesPerBuffer)
+
+    const inputStream = portaudio.Stream.create({
+        channelCount : 1 ?? mainIn.maxInputChannels,
+        device: mainIn.id,
+        sampleFormat: portaudio.formats.float32,
+        callback: (data) => {
+
+            outputStream.write(data);
+            // // console.log("JS ",data.length)
+            // const newArr = new Float32Array(collected.length + data.length);
+
+            // newArr.set(collected)
+            // newArr.set(data,collected.length);
+            // collected = newArr
+        }
+    },undefined,sampleRate,framesPerBuffer);
+
+    outputStream.start()
+    inputStream.start();
+
     console.timeEnd("predict")
 
     while(true){
         await new Promise((r) => setTimeout(r,5000))
+        // outputStream.write(collected)
+        // collected = new Float32Array()
+        // await new Promise((r) => setTimeout(r,1000))
     }
 }
 

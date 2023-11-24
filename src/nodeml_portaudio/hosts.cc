@@ -5,7 +5,7 @@ namespace nodeml_portaudio
 {
     namespace hosts
     {
-        Napi::Value GetHosts(const Napi::CallbackInfo &info)
+        Napi::Value getHosts(const Napi::CallbackInfo &info)
         {
             auto env = info.Env();
             try
@@ -36,7 +36,7 @@ namespace nodeml_portaudio
             }
         }
 
-        Napi::Value GetHostDevices(const Napi::CallbackInfo &info)
+        Napi::Value getHostDevices(const Napi::CallbackInfo &info)
         {
             auto env = info.Env();
             try
@@ -81,7 +81,7 @@ namespace nodeml_portaudio
             }
         }
 
-        Napi::Value GetDefaultHostIndex(const Napi::CallbackInfo &info)
+        Napi::Value getDefaultHostIndex(const Napi::CallbackInfo &info)
         {
             auto env = info.Env();
             try
@@ -96,9 +96,9 @@ namespace nodeml_portaudio
 
         Napi::Object Init(Napi::Env env, Napi::Object exports)
         {
-            exports.Set("getHosts", Napi::Function::New(env, GetHosts));
-            exports.Set("getHostDevices",Napi::Function::New(env,GetHostDevices));
-            exports.Set("getDefaultHostIndex",Napi::Function::New(env,GetDefaultHostIndex));
+            exports.Set("getHosts", Napi::Function::New(env, getHosts));
+            exports.Set("getHostDevices",Napi::Function::New(env,getHostDevices));
+            exports.Set("getDefaultHostIndex",Napi::Function::New(env,getDefaultHostIndex));
             return exports;
         }
 

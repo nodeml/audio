@@ -3,33 +3,40 @@
 #include <napi.h>
 #include <functional>
 #include <portaudio.h>
+#include <queue>
+#include <nodeml_portaudio/utils.h>
+#include <nodeml_portaudio/ChunkStream.h>
 
 namespace nodeml_portaudio
 {
-
-    enum EStreamType {
-        Input,
-        Output,
-        Duplex
-    };
 
     struct StreamInfo
     {
         Napi::ThreadSafeFunction tsfn;
         bool bHasBeenAquired = false;
-        EStreamType type;
         PaStreamParameters inputParams;
         PaStreamParameters outputParams;
     };
 
-    struct StreamCallbackInfo
+    struct StreamInputInfo
     {
-        void *dataIn = NULL;
-        void *dataOut = NULL;
+        void *data = nullptr;
         unsigned long frameCount;
-        const PaStreamCallbackTimeInfo *timeInfo;
+        unsigned long totalCount;
+        int format;
 
-        StreamInfo * streamInfo = NULL;
+        StreamInputInfo(const void *dataIn, unsigned long frameCountIn,StreamInfo * streamInfo){
+
+            frameCount = frameCountIn;
+            format = streamInfo->inputParams.sampleFormat;
+            totalCount = streamInfo->inputParams.channelCount * frameCountIn;
+            data = utils::createFormatPtr(totalCount,format);
+            utils::memCpyFormat(dataIn,data,totalCount,format);
+        }
+
+        ~StreamInputInfo(){
+            delete[] data;
+        }
     };
 
     class Stream : public Napi::ObjectWrap<Stream>
@@ -41,6 +48,10 @@ namespace nodeml_portaudio
         PaStream *stream = NULL;
 
         StreamInfo *streamInfo = NULL;
+
+        ChunkStream outputQueue;
+
+        bool hasAquiredInputTsfn = false;
 
         static Napi::Object Init(Napi::Env env, Napi::Object exports);
 
@@ -54,6 +65,8 @@ namespace nodeml_portaudio
 
         Napi::Value IsActive(const Napi::CallbackInfo &info);
 
+        Napi::Value Write(const Napi::CallbackInfo &info);
+
         Napi::Value Start(const Napi::CallbackInfo &info);
 
         Napi::Value Stop(const Napi::CallbackInfo &info);
@@ -63,5 +76,7 @@ namespace nodeml_portaudio
         void prepare(const Napi::CallbackInfo &info);
 
         void cleanup();
+
+
     };
 }

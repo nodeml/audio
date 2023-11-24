@@ -46,17 +46,28 @@ export interface IStreamParams<T extends StreamFormats = StreamFormats> {
     channelCount: number;
     device: number;
     sampleFormat: T;
-    suggestLatency: number;
+    suggestLatency?: number;
 }
 
-export type StreamCallback<InputFormat extends StreamFormats = StreamFormats, OutputFormat extends StreamFormats = StreamFormats> = (input: InputFormat extends undefined ? undefined : IFormatsToArrays[InputFormat], output: OutputFormat extends undefined ? undefined : IFormatsToArrays[OutputFormat], frameCount: number, time: number) => number;
+export type StreamCallback<InputFormat extends StreamFormats = StreamFormats> = (data: InputFormat extends undefined ? undefined : IFormatsToArrays[InputFormat], frameCount: number) => void;
 
-export declare class Stream {
-    static create<InputFormat extends StreamFormats = undefined, OutputFormat extends StreamFormats = undefined>(input: IStreamParams<InputFormat> | undefined, output: IStreamParams<OutputFormat> | undefined, sampleRate: number, framesPerBuffer: number, callback: StreamCallback<InputFormat, OutputFormat>): Stream
+
+export interface IStreamInputParams<T extends StreamFormats = StreamFormats> extends IStreamParams<T> {
+    callback: StreamCallback<T>
+}
+
+
+export declare class Stream<InputFormat extends StreamFormats, OutputFormat extends StreamFormats> {
+
+    static create<InputFormat extends StreamFormats = undefined, OutputFormat extends StreamFormats = undefined>(input: IStreamInputParams<InputFormat> | undefined, output: IStreamParams<OutputFormat> | undefined, sampleRate: number, framesPerBuffer: number): Stream<InputFormat,OutputFormat>
 
     start: () => void;
+
     stop: () => void;
+
     close: () => void;
+
+    write: (data: OutputFormat extends undefined ? undefined : IFormatsToArrays[OutputFormat]) => boolean;
 }
 
 export declare function getHosts(): IPortAudioHost[]
