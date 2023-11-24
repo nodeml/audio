@@ -44,9 +44,7 @@ jobs:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
       - run: |
-          echo "@tarehimself:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.ORG_NPM_TOKEN }}" >> .npmrc
+          echo "_auth=${{ secrets.ORG_NPM_TOKEN }}" >> .npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.ORG_NPM_TOKEN }}" >> .npmrc
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.ORG_NPM_TOKEN }}
         
