@@ -3,7 +3,7 @@
 #include <napi.h>
 #include <functional>
 
-namespace nodeml_portaudio
+namespace nodeml_audio
 {
 
     namespace hosts

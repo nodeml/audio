@@ -28,13 +28,13 @@ async function main() {
     const framesPerBuffer = parseInt(sampleRate * recordTime)
 
     console.log(framesPerBuffer)
-    const outputStream = portaudio.Stream.create(undefined,{
+    const outputStream = portaudio.create(undefined,{
         channelCount : 1 ?? mainOut.maxOutputChannels,
         device: mainOut.id,
         sampleFormat: portaudio.formats.float32
     },sampleRate,framesPerBuffer)//,framesPerBuffer)
 
-    const inputStream = portaudio.Stream.create({
+    const inputStream = portaudio.create({
         channelCount : 1 ?? mainIn.maxInputChannels,
         device: mainIn.id,
         sampleFormat: portaudio.formats.float32,

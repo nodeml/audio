@@ -4,7 +4,7 @@
 #include "Stream.h"
 #include <iostream>
 
-namespace nodeml_portaudio
+namespace nodeml_audio
 {
 
     Napi::FunctionReference Stream::constructor;
@@ -12,8 +12,7 @@ namespace nodeml_portaudio
     Napi::Object Stream::Init(Napi::Env env, Napi::Object exports)
     {
         auto func = DefineClass(env, "Stream",
-                                {Stream::StaticMethod("create", &Stream::Create),
-                                Stream::InstanceMethod("write", &Stream::Write),
+                                {Stream::InstanceMethod("write", &Stream::Write),
                                  Stream::InstanceMethod("start", &Stream::Start),
                                  Stream::InstanceMethod("stop", &Stream::Stop),
                                  Stream::InstanceMethod("close", &Stream::Close)});
@@ -21,6 +20,7 @@ namespace nodeml_portaudio
         constructor = Napi::Persistent(func);
         constructor.SuppressDestruct();
         exports.Set("Stream", func);
+        exports.Set("createStream",Napi::Function::New(env,&Stream::Create));
         return exports;
     }
 

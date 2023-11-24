@@ -3,7 +3,7 @@
 #include <addon/utils.h>
 #include <iostream>
 
-namespace nodeml_portaudio
+namespace nodeml_audio
 {
     struct Chunk
     {

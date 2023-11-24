@@ -4,7 +4,7 @@
 #include <napi.h>
 #include <functional>
 
-namespace nodeml_portaudio
+namespace nodeml_audio
 {
     template <typename T>
     class FunctionWorker : public Napi::AsyncWorker

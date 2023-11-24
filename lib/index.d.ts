@@ -56,11 +56,7 @@ export interface IStreamInputParams<T extends StreamFormats = StreamFormats> ext
     callback: StreamCallback<T>
 }
 
-
-export declare class Stream<InputFormat extends StreamFormats, OutputFormat extends StreamFormats> {
-
-    static create<InputFormat extends StreamFormats = undefined, OutputFormat extends StreamFormats = undefined>(input: IStreamInputParams<InputFormat> | undefined, output: IStreamParams<OutputFormat> | undefined, sampleRate: number, framesPerBuffer: number): Stream<InputFormat,OutputFormat>
-
+export declare class Stream<OutputFormat extends StreamFormats> {
     start: () => void;
 
     stop: () => void;
@@ -69,6 +65,8 @@ export declare class Stream<InputFormat extends StreamFormats, OutputFormat exte
 
     write: (data: OutputFormat extends undefined ? undefined : IFormatsToArrays[OutputFormat]) => boolean;
 }
+
+export declare function createStream<InputFormat extends StreamFormats = undefined, OutputFormat extends StreamFormats = undefined>(input: IStreamInputParams<InputFormat> | undefined, output: IStreamParams<OutputFormat> | undefined, sampleRate: number, framesPerBuffer: number): Stream<OutputFormat>;
 
 export declare function getHosts(): IPortAudioHost[]
 

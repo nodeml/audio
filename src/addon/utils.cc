@@ -1,7 +1,7 @@
 #include "utils.h"
 #include <iostream>
 
-namespace nodeml_portaudio
+namespace nodeml_audio
 {
     namespace utils
     {

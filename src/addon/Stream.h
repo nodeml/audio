@@ -7,7 +7,7 @@
 #include <addon/utils.h>
 #include <addon/ChunkStream.h>
 
-namespace nodeml_portaudio
+namespace nodeml_audio
 {
 
     struct StreamInfo

@@ -17,13 +17,13 @@ Napi::Object InitModule(Napi::Env env, Napi::Object exports)
 
     env.AddCleanupHook(cleanup);
 
-    nodeml_portaudio::hosts::Init(env,exports);
+    nodeml_audio::hosts::Init(env,exports);
 
-    nodeml_portaudio::Stream::Init(env,exports);
+    nodeml_audio::Stream::Init(env,exports);
 
-    nodeml_portaudio::formats::Init(env,exports);
+    nodeml_audio::formats::Init(env,exports);
 
     return exports;
 }
 
-NODE_API_MODULE(nodeml_portaudio, InitModule);
+NODE_API_MODULE(nodeml_audio, InitModule);

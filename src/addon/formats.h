@@ -4,7 +4,7 @@
 #include <functional>
 #include <portaudio.h>
 
-namespace nodeml_portaudio
+namespace nodeml_audio
 {
 
     namespace formats

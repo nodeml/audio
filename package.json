@@ -1,5 +1,5 @@
 {
-  "name": "@nodeml/portaudio",
+  "name": "@nodeml/audio",
   "version": "1.0.0",
   "description": "Minimal portaudio bindings for nodejs.",
   "main": "./lib/index.js",
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nodeml/portaudio.git"
+    "url": "git+https://github.com/nodeml/audio.git"
   },
   "scripts": {
     "start": "node ./test.js",
