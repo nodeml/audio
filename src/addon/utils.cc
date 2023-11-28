@@ -361,6 +361,37 @@ namespace nodeml_audio
 
             return ptr;
         }
+        void *getTypedArrayDataPtr(Napi::TypedArray source)
+        {
+            switch (source.TypedArrayType())
+            {
+            case napi_float32_array:
+                return source.As<Napi::TypedArrayOf<float>>().Data();
+                break;
+
+            case napi_int32_array:
+                return source.As<Napi::TypedArrayOf<int32_t>>().Data();
+                break;
+
+            case napi_int16_array:
+                return source.As<Napi::TypedArrayOf<int16_t>>().Data();
+                break;
+
+            case napi_int8_array:
+                return source.As<Napi::TypedArrayOf<int8_t>>().Data();
+                break;
+
+            case napi_uint8_array:
+                return source.As<Napi::TypedArrayOf<uint8_t>>().Data();
+                break;
+
+            default:
+                return nullptr;
+                break;
+            }
+            
+            return nullptr;
+        }
         void *getTypedArrayDataPtr(Napi::TypedArray source, int format)
         {
             switch (format)

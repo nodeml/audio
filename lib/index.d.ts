@@ -1,4 +1,5 @@
 
+type ValueOf<T> = T[keyof T]
 
 export interface IPortAudioHost {
     id: number;
@@ -73,3 +74,8 @@ export declare function getHosts(): IPortAudioHost[]
 export declare function getHostDevices(hostId: number): IPortAudioDevice[]
 
 export declare function getDefaultHostIndex(): number
+
+
+export namespace wav {
+    declare function write(fileName: string,data: Exclude<ValueOf<IFormatsToArrays>,undefined>, channels: number, sampleRate: number): void;
+}

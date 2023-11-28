@@ -32,6 +32,8 @@ namespace nodeml_audio
         
         void * copyDataFromTypedArray(Napi::TypedArray source,int format);
 
+        void * getTypedArrayDataPtr(Napi::TypedArray source);
+
         void * getTypedArrayDataPtr(Napi::TypedArray source,int format);
 
         template <typename T>

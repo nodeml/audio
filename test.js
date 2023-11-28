@@ -1,5 +1,5 @@
 
-const portaudio = require('./lib')
+const audio = require('./lib')
 const path = require('node:path')
 
 async function main() {
@@ -13,11 +13,11 @@ async function main() {
     //     console.log("Args",total)
     //     return !total.includes('USER:');
     // })
-    const hosts = portaudio.getHosts();
+    const hosts = audio.getHosts();
     const defaultHost = hosts[0]
-    const mainIn = portaudio.getHostDevices(defaultHost.id).find(c => c.id === defaultHost.defaultInputDevice);
+    const mainIn = audio.getHostDevices(defaultHost.id).find(c => c.id === defaultHost.defaultInputDevice);
 
-    const mainOut = portaudio.getHostDevices(defaultHost.id).find(c => c.id === defaultHost.defaultOutputDevice);
+    const mainOut = audio.getHostDevices(defaultHost.id).find(c => c.id === defaultHost.defaultOutputDevice);
     console.log("USING DEVICE JS",defaultHost,mainIn,mainOut)
 
     let collected = new Float32Array();
@@ -28,16 +28,16 @@ async function main() {
     const framesPerBuffer = parseInt(sampleRate * recordTime)
 
     console.log(framesPerBuffer)
-    const outputStream = portaudio.create(undefined,{
+    const outputStream = audio.createStream(undefined,{
         channelCount : 1 ?? mainOut.maxOutputChannels,
         device: mainOut.id,
-        sampleFormat: portaudio.formats.float32
+        sampleFormat: audio.formats.float32
     },sampleRate,framesPerBuffer)//,framesPerBuffer)
 
-    const inputStream = portaudio.create({
+    const inputStream = audio.createStream({
         channelCount : 1 ?? mainIn.maxInputChannels,
         device: mainIn.id,
-        sampleFormat: portaudio.formats.float32,
+        sampleFormat: audio.formats.float32,
         callback: (data) => {
 
             outputStream.write(data);

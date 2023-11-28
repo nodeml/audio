@@ -32,6 +32,12 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/deps/portaudio portaudio)
 # Build a shared library named after the project from the files in `src/`
 file(GLOB_RECURSE SOURCE_FILES "src/*.cc" "src/*.h")
 
+# Build a shared library named after the project from the files in `src/`
+file(GLOB DR_SOURCE_FILES ${DR_LIBS_DIR}/*.cc ${DR_LIBS_DIR}/*.h)
+
+# add_definitions(-DDRWAV_IMPLEMENTATION)
+
+# message(STATUS "DR WAVE FILES ${DR_SOURCE_FILES}")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 
 # Gives our library file a .node extension without any "lib" prefix
