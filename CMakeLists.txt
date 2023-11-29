@@ -19,23 +19,18 @@ include_directories(${CMAKE_JS_INC})
 
 set(PORT_AUDIO_VERSION "190700_20210406" CACHE STRING "PortAudio Version")
 
-set(PORT_AUDIO_DIR ${CMAKE_SOURCE_DIR}/deps/portaudio)
+DownloadPortAudio(${PORT_AUDIO_VERSION} ${CMAKE_SOURCE_DIR}/deps PORT_AUDIO_DIR)
 
-DownloadPortAudio(${PORT_AUDIO_VERSION} ${CMAKE_SOURCE_DIR}/deps)
+DownloadLibSndFile(1.0.28 ${CMAKE_SOURCE_DIR}/deps LIB_SND_FILE_DIR)
 
-set(DR_LIBS_DIR ${CMAKE_SOURCE_DIR}/deps/drlibs)
+message(STATUS "DIRS ${PORT_AUDIO_DIR} ${WAVE_DIR}")
 
-DownloadDrLibs(${CMAKE_SOURCE_DIR}/deps)
+find_package(SndFile)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/deps/portaudio portaudio)
+add_subdirectory(${PORT_AUDIO_DIR} portaudio)
 
 # Build a shared library named after the project from the files in `src/`
 file(GLOB_RECURSE SOURCE_FILES "src/*.cc" "src/*.h")
-
-# Build a shared library named after the project from the files in `src/`
-file(GLOB DR_SOURCE_FILES ${DR_LIBS_DIR}/*.cc ${DR_LIBS_DIR}/*.h)
-
-# add_definitions(-DDRWAV_IMPLEMENTATION)
 
 # message(STATUS "DR WAVE FILES ${DR_SOURCE_FILES}")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
@@ -45,7 +40,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
 
+target_link_libraries(${PROJECT_NAME} SndFile::sndfile)
+
 target_link_libraries(${PROJECT_NAME} portaudio)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${LIB_SND_FILE_DIR}/include)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${PORT_AUDIO_DIR}/include)
 

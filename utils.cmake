@@ -1,6 +1,9 @@
 
-function(DownloadPortAudio VERSION DESTINATION)
-  if(NOT EXISTS ${DESTINATION}/portaudio)
+function(DownloadPortAudio VERSION DESTINATION VAR_NAME)
+
+  set(FINAL_DIR ${DESTINATION}/portaudio)
+
+  if(NOT EXISTS ${FINAL_DIR})
 
     set(DOWNLOAD_FILE ${CMAKE_BINARY_DIR}/paudio.tgz)
 
@@ -11,14 +14,38 @@ function(DownloadPortAudio VERSION DESTINATION)
 
     file(REMOVE ${DOWNLOAD_FILE})
   endif()
+
+  set(${VAR_NAME} ${FINAL_DIR} PARENT_SCOPE)
 endfunction()
 
-function(DownloadDrLibs DESTINATION)
-  if(NOT EXISTS ${DESTINATION}/drlibs)
+function(DownloadLibSndFile VERSION DESTINATION VAR_NAME)
+
+  set(FINAL_DIR ${DESTINATION}/libsndfile)
+
+  if(NOT EXISTS ${FINAL_DIR})
     execute_process(
-      COMMAND git clone --depth 1 https://github.com/mackron/dr_libs ${DESTINATION}/drlibs
+      COMMAND git clone --depth 1 --branch ${VERSION} https://github.com/libsndfile/libsndfile ${FINAL_DIR}
+    )
+
+  endif()
+
+  list(APPEND CMAKE_PREFIX_PATH ${FINAL_DIR}/CMake)
+
+  set(${VAR_NAME} ${FINAL_DIR} PARENT_SCOPE)
+endfunction()
+
+function(DownloadWave DESTINATION VAR_NAME)
+  set(FINAL_DIR ${DESTINATION}/wave)
+
+  if(NOT EXISTS ${FINAL_DIR})
+    execute_process(
+      COMMAND git clone --depth 1 https://github.com/libsndfile/libsndfile ${FINAL_DIR}
     )
   endif()
+
+  list(APPEND CMAKE_PREFIX_PATH ${FINAL_DIR}/cmake)
+
+  set(${VAR_NAME} ${FINAL_DIR} PARENT_SCOPE)
 endfunction()
 
 # Get the version from the package.json

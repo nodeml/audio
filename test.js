@@ -42,11 +42,11 @@ async function main() {
 
             outputStream.write(data);
             // // console.log("JS ",data.length)
-            // const newArr = new Float32Array(collected.length + data.length);
+            const newArr = new Float32Array(collected.length + data.length);
 
-            // newArr.set(collected)
-            // newArr.set(data,collected.length);
-            // collected = newArr
+            newArr.set(collected)
+            newArr.set(data,collected.length);
+            collected = newArr
         }
     },undefined,sampleRate,framesPerBuffer);
 
@@ -57,6 +57,11 @@ async function main() {
 
     while(true){
         await new Promise((r) => setTimeout(r,5000))
+        console.log("Saving",collected.length,"Frames")
+        console.time("Wav Write")
+        audio.wav.write("testData.wav",collected,2,mainIn.defaultSampleRate);
+        console.timeEnd("Wav Write")
+        
         // outputStream.write(collected)
         // collected = new Float32Array()
         // await new Promise((r) => setTimeout(r,1000))
