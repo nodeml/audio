@@ -23,7 +23,7 @@ DownloadPortAudio(${PORT_AUDIO_VERSION} ${CMAKE_SOURCE_DIR}/deps PORT_AUDIO_DIR)
 add_subdirectory(${PORT_AUDIO_DIR} portaudio)
 
 # Build a shared library named after the project from the files in `src/`
-file(GLOB_RECURSE SOURCE_FILES "src/*.cc" "src/*.h")
+file(GLOB_RECURSE SOURCE_FILES "src/*.cc" "src/*.hh")
 
 # message(STATUS "DR WAVE FILES ${DR_SOURCE_FILES}")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})

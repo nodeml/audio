@@ -1,7 +1,6 @@
-#include <addon/stream/PortAudioStream.h>
-#include <addon/utils.h>
+#include <addon/stream/PortAudioStream.hh>
+#include <addon/utils.hh>
 #include <future>
-#include "Stream.h"
 #include <iostream>
 
 namespace nodeml_audio

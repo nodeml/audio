@@ -1,5 +1,5 @@
-#include <addon/utils.h>
-#include "wav.h"
+#include <addon/utils.hh>
+#include <addon/wav/wav.hh>
 
 namespace nodeml_audio
 {

@@ -1,4 +1,4 @@
-#include "formats.h"
+#include <addon/stream/formats.hh>
 
 namespace nodeml_audio
 {

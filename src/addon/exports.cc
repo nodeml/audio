@@ -1,7 +1,7 @@
 
 #include <napi.h>
-#include <addon/wav/wav.h>
-#include <addon/stream/stream.h>
+#include <addon/wav/wav.hh>
+#include <addon/stream/stream.hh>
 
 
 

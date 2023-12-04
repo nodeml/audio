@@ -1,6 +1,6 @@
 #pragma once
 #include <queue>
-#include <addon/utils.h>
+#include <addon/utils.hh>
 #include <iostream>
 
 namespace nodeml_audio

@@ -1,8 +1,8 @@
-#include <addon/stream/stream.h>
-#include <addon/stream/PortAudioStream.h>
+#include <addon/stream/stream.hh>
+#include <addon/stream/PortAudioStream.hh>
 #include <portaudio.h>
-#include <addon/stream/hosts.h>
-#include <addon/stream/formats.h>
+#include <addon/stream/hosts.hh>
+#include <addon/stream/formats.hh>
 
 namespace nodeml_audio
 {

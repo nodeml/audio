@@ -1,4 +1,4 @@
-#include "hosts.h"
+#include <addon/stream/hosts.hh>
 #include <portaudio.h>
 
 namespace nodeml_audio
