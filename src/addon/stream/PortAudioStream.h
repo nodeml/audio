@@ -27,14 +27,12 @@ namespace nodeml_audio
             unsigned long totalCount;
             int format;
 
-            StreamInputInfo(const void *dataIn, unsigned long frameCountIn, StreamInfo *streamInfo)
+            StreamInputInfo(const void *dataIn, unsigned long frameCountIn, StreamInfo *streamInfo) : frameCount(frameCountIn),
+                                                                                                      format(streamInfo->inputParams.sampleFormat),
+                                                                                                      totalCount(streamInfo->inputParams.channelCount * frameCountIn),
+                                                                                                      data(utils::allocFormat(streamInfo->inputParams.channelCount * frameCountIn, streamInfo->inputParams.sampleFormat))
             {
-
-                frameCount = frameCountIn;
-                format = streamInfo->inputParams.sampleFormat;
-                totalCount = streamInfo->inputParams.channelCount * frameCountIn;
-                data = utils::createFormatPtr(totalCount, format);
-                utils::memCpyFormat(dataIn, data, totalCount, format);
+                memcpy(data, dataIn, totalCount * utils::sizeOfFormat(format));
             }
 
             ~StreamInputInfo()

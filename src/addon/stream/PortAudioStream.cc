@@ -132,7 +132,8 @@ namespace nodeml_audio
         Napi::Value PortAudioStream::Close(const Napi::CallbackInfo &info)
         {
 
-            if(Pa_IsStreamActive(stream)){
+            if (Pa_IsStreamActive(stream))
+            {
                 Stop(info);
             }
 
@@ -173,10 +174,14 @@ namespace nodeml_audio
                 inputParams.device = paNoDevice;
                 outputParams.device = paNoDevice;
 
-                if (info[0].IsObject())
+                auto streamConfig = info[0].ToObject();
+
+                if (streamConfig.Has("input") && streamConfig.Get("input").IsObject())
                 {
-                    utils::getStreamParameters(inputParams, info[0].ToObject());
-                    auto callback = info[0].ToObject().Get("callback").As<Napi::Function>();
+                    auto config = streamConfig.Get("input").ToObject();
+
+                    utils::getStreamParameters(inputParams, config);
+                    auto callback = config.Get("callback").As<Napi::Function>();
 
                     streamInfo->tsfn = Napi::ThreadSafeFunction::New(
                         env, callback, "StreamCallback", 0, 1, [](Napi::Env env, StreamInfo *pAudioDataCreated)
@@ -186,17 +191,20 @@ namespace nodeml_audio
                     streamInfo->bHasBeenAquired = false;
                 }
 
-                if (info[1].IsObject())
-                    utils::getStreamParameters(outputParams, info[1].ToObject());
+                if (streamConfig.Has("output") && streamConfig.Get("output").IsObject())
+                {
+                    auto config = streamConfig.Get("output").ToObject();
+                    utils::getStreamParameters(outputParams, config);
+                }
 
                 if (inputParams.device == outputParams.device && inputParams.device == paNoDevice)
                 {
                     throw Napi::Error::New(env, "Cannot open a stream with no input or output");
                 }
 
-                auto sampleRate = info[2].ToNumber().DoubleValue();
+                auto sampleRate = info[1].ToNumber().DoubleValue();
 
-                unsigned long framesPerBuffer = info[3].ToNumber().Int64Value();
+                unsigned long framesPerBuffer = info[2].ToNumber().Int64Value();
 
                 streamInfo->inputParams = inputParams;
                 streamInfo->outputParams = outputParams;
@@ -228,7 +236,7 @@ namespace nodeml_audio
                             owner->streamInfo->tsfn.NonBlockingCall(streamInputInfo, [](Napi::Env env, Napi::Function jsCallback, StreamInputInfo *value)
                                                                     {
 
-                            jsCallback.Call({utils::copyToTypedArray(env,value->data,value->totalCount,value->format), Napi::Number::New(env,value->frameCount)});
+                            jsCallback.Call({utils::typedArrayForFormat(env,value->totalCount,value->format,value->data), Napi::Number::New(env,value->frameCount)});
 
                             delete value; });
                         }
@@ -236,7 +244,6 @@ namespace nodeml_audio
                         if (output != nullptr)
                         {
                             auto dataGiven = owner->outputQueue.GetData(output, owner->streamInfo->outputParams.channelCount * frameCount);
-                            // std::cout << "Sent " << dataGiven << " Elements" << std::endl;
                         }
 
                         return 0; // returnCode;

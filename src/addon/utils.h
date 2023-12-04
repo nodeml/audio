@@ -11,30 +11,15 @@ namespace nodeml_audio
     {
         void getStreamParameters(PaStreamParameters &params, const Napi::Object object);
 
-        void *copyInputData(const void *data, size_t dataLength, int format);
+        void *allocFormat(size_t size, int format);
 
-        void memCpyFormat(const void *src, void *dest, size_t dataLength, int format);
+        Napi::Value typedArrayForFormat(Napi::Env env, size_t dataLength, int format);
 
-        void *createFormatPtr(size_t size, int format);
-
-        template <typename T>
-        void memCpyTyped(const T *src, const T *dest, size_t numElements);
-
-        Napi::Value copyToTypedArray(Napi::Env env, void *data, size_t dataLength, int format);
-
-        Napi::Value emptyTypedArray(Napi::Env env, size_t dataLength, int format);
+        Napi::Value typedArrayForFormat(Napi::Env env, size_t dataLength, int format, void *data);
 
         void *copyDataFromTypedArray(Napi::TypedArray source, int format);
 
         void *getTypedArrayDataPtr(Napi::TypedArray source);
-
-        void *getTypedArrayDataPtr(Napi::TypedArray source, int format);
-
-        template <typename T>
-        void memCpyTyped(const T *src, T *dest, size_t numElements)
-        {
-            memcpy(dest, src, numElements * sizeof(T));
-        }
 
         int sizeOfFormat(int format);
 

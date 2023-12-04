@@ -1,5 +1,5 @@
 
-const audio = require('./lib')
+const audio = require('./lib').stream
 const path = require('node:path')
 
 async function main() {
@@ -23,32 +23,36 @@ async function main() {
     let collected = new Float32Array();
 
     const sampleRate = mainOut.defaultSampleRate;
-    const recordTime = 0.03;
+    const recordTime = 1;
 
-    const framesPerBuffer = parseInt(sampleRate * recordTime)
+    const framesPerBuffer = 8000//parseInt(sampleRate * recordTime)
 
     console.log(framesPerBuffer)
-    const outputStream = audio.createStream(undefined,{
-        channelCount : 1 ?? mainOut.maxOutputChannels,
-        device: mainOut.id,
-        sampleFormat: audio.formats.float32
+    const outputStream = audio.open({
+        output: {
+            channelCount : 1 ?? mainOut.maxOutputChannels,
+            device: mainOut.id,
+            sampleFormat: audio.formats.float32
+        }
     },sampleRate,framesPerBuffer)//,framesPerBuffer)
 
-    const inputStream = audio.createStream({
-        channelCount : 1 ?? mainIn.maxInputChannels,
-        device: mainIn.id,
-        sampleFormat: audio.formats.float32,
-        callback: (data) => {
-
-            outputStream.write(data);
-            // // console.log("JS ",data.length)
-            const newArr = new Float32Array(collected.length + data.length);
-
-            newArr.set(collected)
-            newArr.set(data,collected.length);
-            collected = newArr
+    const inputStream = audio.open({
+        input: {
+            channelCount : 1 ?? mainIn.maxInputChannels,
+            device: mainIn.id,
+            sampleFormat: audio.formats.float32,
+            callback: (data) => {
+    
+                outputStream.write(data);
+                // // console.log("JS ",data.length)
+                const newArr = new Float32Array(collected.length + data.length);
+    
+                newArr.set(collected)
+                newArr.set(data,collected.length);
+                collected = newArr
+            }
         }
-    },undefined,sampleRate,framesPerBuffer);
+    },sampleRate,framesPerBuffer);
 
     outputStream.start()
     inputStream.start();
@@ -57,10 +61,10 @@ async function main() {
 
     while(true){
         await new Promise((r) => setTimeout(r,5000))
-        console.log("Saving",collected.length,"Frames")
-        console.time("Wav Write")
-        audio.wav.write("testData.wav",collected,2,mainIn.defaultSampleRate);
-        console.timeEnd("Wav Write")
+        // console.log("Saving",collected.length,"Frames")
+        // console.time("Wav Write")
+        // audio.wav.write("testData.wav",collected,2,mainIn.defaultSampleRate);
+        // console.timeEnd("Wav Write")
         
         // outputStream.write(collected)
         // collected = new Float32Array()

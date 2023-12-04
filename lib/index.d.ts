@@ -57,6 +57,19 @@ export namespace stream {
     interface IStreamInputParams<T extends StreamFormats = StreamFormats> extends IStreamParams<T> {
         callback: StreamCallback<T>
     }
+
+    type StreamConfig<InputFormat extends StreamFormats,OutputFormat extends StreamFormats> = 
+    {
+        output: IStreamParams<OutputFormat>
+    } |
+    
+    {
+        input: IStreamInputParams<InputFormat>
+    } |
+    {
+        input: IStreamInputParams<InputFormat>
+        output: IStreamParams<OutputFormat>
+    }
     
     declare class Stream<OutputFormat extends StreamFormats> {
         start: () => void;
@@ -68,7 +81,7 @@ export namespace stream {
         write: (data: OutputFormat extends undefined ? undefined : IFormatsToArrays[OutputFormat]) => boolean;
     }
     
-    declare function createStream<InputFormat extends StreamFormats = undefined, OutputFormat extends StreamFormats = undefined>(input: IStreamInputParams<InputFormat> | undefined, output: IStreamParams<OutputFormat> | undefined, sampleRate: number, framesPerBuffer: number): Stream<OutputFormat>;
+    declare function open<InputFormat extends StreamFormats = undefined, OutputFormat extends StreamFormats = undefined>(config: StreamConfig<InputFormat,OutputFormat>, sampleRate: number, framesPerBuffer: number): Stream<OutputFormat>;
     
     declare function getHosts(): IPortAudioHost[]
     
@@ -77,6 +90,6 @@ export namespace stream {
     declare function getDefaultHostIndex(): number
 }
 
-export namespace wav {
-    declare function write(fileName: string,data: Exclude<ValueOf<stream.IFormatsToArrays>,undefined>, channels: number, sampleRate: number): void;
-}
+// export namespace wav {
+//     declare function write(fileName: string,data: Exclude<ValueOf<stream.IFormatsToArrays>,undefined>, channels: number, sampleRate: number): void;
+// }

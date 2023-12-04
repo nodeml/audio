@@ -19,31 +19,28 @@ function(DownloadPortAudio VERSION DESTINATION VAR_NAME)
 endfunction()
 
 function(DownloadLibSndFile VERSION DESTINATION VAR_NAME)
-
-  set(FINAL_DIR ${DESTINATION}/libsndfile)
-
-  if(NOT EXISTS ${FINAL_DIR})
-    execute_process(
-      COMMAND git clone --depth 1 --branch ${VERSION} https://github.com/libsndfile/libsndfile ${FINAL_DIR}
-    )
-
+  if(WIN32)
+    set(FINAL_DIR ${DESTINATION}/libsndfile-${VERSION}-win64)
+  else()
+    set(FINAL_DIR ${DESTINATION}/libsndfile-${VERSION})
   endif()
 
-  list(APPEND CMAKE_PREFIX_PATH ${FINAL_DIR}/CMake)
-
-  set(${VAR_NAME} ${FINAL_DIR} PARENT_SCOPE)
-endfunction()
-
-function(DownloadWave DESTINATION VAR_NAME)
-  set(FINAL_DIR ${DESTINATION}/wave)
-
   if(NOT EXISTS ${FINAL_DIR})
-    execute_process(
-      COMMAND git clone --depth 1 https://github.com/libsndfile/libsndfile ${FINAL_DIR}
-    )
-  endif()
+    set(DOWNLOAD_FILE ${CMAKE_BINARY_DIR}/libsndfile.tgz)
+    
+    if(WIN32)
+      set(DOWNLOAD_URL https://github.com/libsndfile/libsndfile/releases/download/${VERSION}/libsndfile-${VERSION}-win64.zip)
+    else()
+      set(DOWNLOAD_URL https://github.com/libsndfile/libsndfile/releases/download/${VERSION}/libsndfile-${VERSION}.tar.xz)
+    endif()
 
-  list(APPEND CMAKE_PREFIX_PATH ${FINAL_DIR}/cmake)
+    message(STATUS "DOWNLOAD URL ${DOWNLOAD_URL}")
+    file(DOWNLOAD ${DOWNLOAD_URL} ${DOWNLOAD_FILE} SHOW_PROGRESS)
+
+    file(ARCHIVE_EXTRACT INPUT ${DOWNLOAD_FILE} DESTINATION ${DESTINATION})
+
+    file(REMOVE ${DOWNLOAD_FILE})
+  endif()
 
   set(${VAR_NAME} ${FINAL_DIR} PARENT_SCOPE)
 endfunction()

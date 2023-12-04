@@ -148,7 +148,7 @@ namespace nodeml_audio
             {
                 auto chunksLeft = chunkSize - elementsTakenFromChunk;
 
-                auto newPtr = utils::createFormatPtr(chunksLeft, format);
+                auto newPtr = utils::allocFormat(chunksLeft, format);
 
                 memcpy(newPtr, ((T *)chunk->data) + elementsTakenFromChunk, chunksLeft * formatSize);
 
